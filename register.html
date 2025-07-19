@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>THDC India Limited - Hospital Bhagirathi Puram, Tehri</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+  .login-link {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .login-link p {
+    font-size: 0.95rem;
+    color: #333;
+  }
+
+  .login-link a {
+    color: #0077cc;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .login-link a:hover {
+    text-decoration: underline;
+    color: #005fa3;
+  }
+</style>
+
+</head>
+<body>
+    <header>
+    <div>
+        <div>
+            <img src="thdclogo.png" alt="THDC India Limited Logo" class="logo">
+            <h1 >THDC India Limited</h1>
+            <h2>Hospital Bhagirathi Puram, Tehri</h2>
+        </div>
+        <div>
+            <a href="logout.php" style="text-decoration: none;">
+                <button style="padding: 10px 15px; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">
+                    Logout
+                </button>
+            </a>
+        </div>
+    </div>
+</header>
+
+  <main class="container">
+    <h3>Patient Registration Portal</h3>
+    <form id="registrationForm" action="register.php" method="POST">
+        <div id="formMessage" class="success-msg" style="display: none;"></div>
+
+      
+      <div class="form-group">
+        <label for="category">Category:</label>
+        <select id="category" name="category" onchange="toggleFields()" required>
+          <option value="A">Category A (Employees)</option>
+          <option value="B">Category B (Contract/Non-Employee)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+  <label for="opd_reg_no">OPD Reg No:</label>
+  <input type="text" id="opd_reg_no" name="opd_reg_no" placeholder="Enter or auto-generate" />
+</div>
+
+<div class="form-group">
+  <label for="reg_date">Select Date & Time:</label>
+  <input type="datetime-local" id="reg_date" name="reg_date" required />
+</div>
+
+
+      <div class="form-group">
+        <label for="name">Patient Name:</label>
+        <input type="text" id="name" name="name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" min="0" required />
+      </div>
+
+      <div class="form-group">
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+          <option value="" disabled selected>Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="mobile">Mobile Number:</label>
+        <input type="tel" id="mobile" name="mobile" pattern="[0-9]{10}" maxlength="10" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email ID:</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+
+      <!-- Category A Specific Fields -->
+      <div id="categoryAFields">
+        <div class="form-group">
+          <label for="employee_name">Employee Name:</label>
+          <input type="text" id="employee_name" name="employee_name" />
+        </div>
+
+        <div class="form-group">
+          <label for="relationship">Relationship with Employee:</label>
+          <select id="relationship" name="relationship">
+            <option value="Self">Self</option>
+            <option value="Spouse">Spouse</option>
+            <option value="Child">Child</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="workplaceGroup" style="display: none;">
+          <label for="workplace">Workplace:</label>
+          <input type="text" id="workplace" name="workplace" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="recommended_doctor">Recommended Doctor:</label>
+        <input type="text" id="recommended_doctor" name="recommended_doctor" required />
+      </div>
+
+      <div class="form-group">
+        <button type="submit" class="btn">Register</button>
+      </div>
+      <div class="form-group login-link">
+  <p>Already have an account? <a href="login.html">Login</a></p>
+</div>
+
+
+    </form>
+  </main>
+
+  <script>
+    function toggleFields() {
+      const category = document.getElementById('category').value;
+      const categoryFields = document.getElementById('categoryAFields');
+      const workplaceGroup = document.getElementById('workplaceGroup');
+      if (category === 'A') {
+        categoryFields.style.display = 'block';
+        workplaceGroup.style.display = 'block';
+      } else {
+        categoryFields.style.display = 'none';
+        workplaceGroup.style.display = 'none';
+      }
+    }
+
+    // Auto-fill date & time
+    document.addEventListener('DOMContentLoaded', () => {
+      const now = new Date();
+      const formatted = now.toLocaleString();
+      document.getElementById('reg_date').value = formatted;
+
+      // Random OPD number (optional, replace with server logic in PHP)
+      const opd = 'OPD-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('opd_reg_no').value = opd;
+
+      // Initially hide category A fields if B is selected by default
+      toggleFields();
+    });
+  </script>
+  <script>
+document.getElementById('registrationForm').addEventListener('submit', function (e) {
+    e.preventDefault(); // Stop form from submitting normally
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+        const msgBox = document.getElementById('formMessage');
+        msgBox.style.display = 'block';
+        msgBox.style.color = 'green';
+        msgBox.innerHTML = data;
+
+        // Optionally reset form:
+        form.reset();
+        toggleFields(); // Hide employee fields if needed
+    })
+    .catch(error => {
+        const msgBox = document.getElementById('formMessage');
+        msgBox.style.display = 'block';
+        msgBox.style.color = 'red';
+        msgBox.innerHTML = 'Something went wrong. Please try again.';
+        console.error(error);
+    });
+});
+</script>
+
+</body>
+</html>
